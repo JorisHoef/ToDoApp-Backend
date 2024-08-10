@@ -4,6 +4,6 @@
     {
         OPEN,
         CLOSED,
-        STALE
+        STALE,
     }
 }
