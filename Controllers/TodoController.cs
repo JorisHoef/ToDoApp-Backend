@@ -75,7 +75,7 @@ public class TodoItemsController : ControllerBase
     {
         var todoItem = new TodoItem
         {
-            IsComplete = todoDTO.IsComplete,
+            TaskState = todoDTO.TaskState,
             Name = todoDTO.Name
         };
 
@@ -121,7 +121,7 @@ public class TodoItemsController : ControllerBase
         {
                 Id = todoItem.Id, 
                 Name = todoItem.Name, 
-                IsComplete = todoItem.IsComplete,
+                TaskState = todoItem.TaskState,
                 CreatedAt = todoItem.CreatedAt,
                 UpdatedAt = todoItem.UpdatedAt,
         };
@@ -130,7 +130,7 @@ public class TodoItemsController : ControllerBase
     private static void CopyDTOToItem(TodoItemDTO todoDTO, TodoItem todoItem)
     {
         todoItem.Name = todoDTO.Name;
-        todoItem.IsComplete = todoDTO.IsComplete;
+        todoItem.TaskState = todoDTO.TaskState;
         todoItem.CreatedAt = todoDTO.CreatedAt;
         todoItem.UpdatedAt = todoDTO.UpdatedAt;
     }
