@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ToDoApp_Backend.Models;
+using ToDoAppBackend.Models;
 
-namespace ToDoApp_Backend
+namespace ToDoAppBackend
 {
     public class Program
     {
@@ -35,7 +35,7 @@ namespace ToDoApp_Backend
 
         private static void AddDbContexts(IServiceCollection services)
         {
-            services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+            services.AddDbContext<TaskContext>(opt => opt.UseInMemoryDatabase("TodoList"));
         }
         
         public static void Configure(WebApplication app, IWebHostEnvironment env)

@@ -1,4 +1,4 @@
-﻿namespace ToDoApp_Backend.Models
+﻿namespace ToDoAppBackend.Models
 {
     public enum TaskState
     {
