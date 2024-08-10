@@ -58,6 +58,7 @@ public class TodoItemsController : ControllerBase
         todoItem.TaskState = todoDTO.TaskState;
         todoItem.CreatedAt = todoDTO.CreatedAt;
         todoItem.UpdatedAt = DateTime.Now;
+        todoItem.SubTasks = todoDTO.SubTasks;
 
         try
         {
@@ -127,6 +128,7 @@ public class TodoItemsController : ControllerBase
                 TaskState = todoItem.TaskState,
                 CreatedAt = todoItem.CreatedAt,
                 UpdatedAt = todoItem.UpdatedAt,
+                SubTasks = todoItem.SubTasks,
         };
     }
 }
