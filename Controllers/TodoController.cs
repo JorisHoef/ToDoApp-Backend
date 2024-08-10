@@ -54,8 +54,7 @@ public class TodoItemsController : ControllerBase
             return NotFound();
         }
 
-        todoItem.Name = todoDTO.Name;
-        todoItem.IsComplete = todoDTO.IsComplete;
+        CopyDTOToItem(todoDTO, todoItem);
 
         try
         {
@@ -110,6 +109,12 @@ public class TodoItemsController : ControllerBase
         return _context.TodoItems.Any(e => e.Id == id);
     }
 
+    /// <summary>
+    /// Is similar to what some devs might call a "ResourceModel", where we only transfer and use what we want from a bigger dataModel
+    /// </summary>
+    /// <param name="todoItem"></param>
+    /// <returns></returns>
+    /// <remarks>Not needed for this app but keep here as reminder that this goes in the controller</remarks>
     private static TodoItemDTO ItemToDTO(TodoItem todoItem)
     {
         return new TodoItemDTO
@@ -117,6 +122,16 @@ public class TodoItemsController : ControllerBase
                 Id = todoItem.Id, 
                 Name = todoItem.Name, 
                 IsComplete = todoItem.IsComplete,
+                CreatedAt = todoItem.CreatedAt,
+                UpdatedAt = todoItem.UpdatedAt,
         };
+    }
+    
+    private static void CopyDTOToItem(TodoItemDTO todoDTO, TodoItem todoItem)
+    {
+        todoItem.Name = todoDTO.Name;
+        todoItem.IsComplete = todoDTO.IsComplete;
+        todoItem.CreatedAt = todoDTO.CreatedAt;
+        todoItem.UpdatedAt = todoDTO.UpdatedAt;
     }
 }
