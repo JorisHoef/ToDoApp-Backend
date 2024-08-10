@@ -9,14 +9,13 @@
     }
   },
   "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5128",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+      "MyWebAPI": {
+        "commandName": "Project",
+        "launchBrowser": true,
+        "applicationUrl": "https://localhost:5001;http://localhost:5000",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
       }
     },
     "https": {
@@ -38,4 +37,3 @@
       }
     }
   }
-}
