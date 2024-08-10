@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ToDoApp_Backend.Models;
+
 namespace ToDoApp_Backend
 {
     public class Program
@@ -19,13 +22,22 @@ namespace ToDoApp_Backend
 
         public static void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            AddDbContexts(services);
+            
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
 
+        private static void AddDbContexts(IServiceCollection services)
+        {
+            services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+        }
+        
         public static void Configure(WebApplication app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
