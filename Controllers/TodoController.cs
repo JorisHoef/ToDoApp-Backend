@@ -54,7 +54,10 @@ public class TodoItemsController : ControllerBase
             return NotFound();
         }
 
-        CopyDTOToItem(todoDTO, todoItem);
+        todoItem.Name = todoDTO.Name;
+        todoItem.TaskState = todoDTO.TaskState;
+        todoItem.CreatedAt = todoDTO.CreatedAt;
+        todoItem.UpdatedAt = DateTime.Now;
 
         try
         {
@@ -125,13 +128,5 @@ public class TodoItemsController : ControllerBase
                 CreatedAt = todoItem.CreatedAt,
                 UpdatedAt = todoItem.UpdatedAt,
         };
-    }
-    
-    private static void CopyDTOToItem(TodoItemDTO todoDTO, TodoItem todoItem)
-    {
-        todoItem.Name = todoDTO.Name;
-        todoItem.TaskState = todoDTO.TaskState;
-        todoItem.CreatedAt = todoDTO.CreatedAt;
-        todoItem.UpdatedAt = todoDTO.UpdatedAt;
     }
 }
