@@ -6,7 +6,7 @@ namespace ToDoAppBackend.Models
     {
         public long Id { get; set; }
         public string? Name { get; set; }
-        public string? TaskMessage { get; set; }
+        public TaskMessage TaskMessage { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TaskState TaskState { get; set; } = TaskState.OPEN;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -21,5 +21,11 @@ namespace ToDoAppBackend.Models
     {
         public TaskItem TaskItem { get; set; }
         public ICollection<TaskItem> ReferencedTaskList { get; set; }
+    }
+
+    public class TaskMessage
+    {
+        public string? Message { get; set; } //Example string: "This task can be completed after task {x.Id} is completed". Where task {x} references a task that already exists by Id
+        public ICollection<TaskItem> TaskItem { get; set; }
     }
 }
