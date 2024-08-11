@@ -15,20 +15,20 @@ namespace ToDoAppBackend.Controllers
             _context = context;
         }
 
-        // GET: api/TodoItems
+        // GET: api/TaskItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskItemDTO>>> GetTodoItems()
+        public async Task<ActionResult<IEnumerable<TaskItemDTO>>> GetTaskItems()
         {
-            return await _context.TodoItems
+            return await _context.TaskItems
                                  .Select(x => ItemToDTO(x))
                                  .ToListAsync();
         }
 
-        // GET: api/TodoItems/5
+        // GET: api/TaskItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskItemDTO>> GetTodoItem(long id)
+        public async Task<ActionResult<TaskItemDTO>> GetTaskItem(long id)
         {
-            var todoItem = await _context.TodoItems.FindAsync(id);
+            var todoItem = await _context.TaskItems.FindAsync(id);
 
             if (todoItem == null)
             {
@@ -38,33 +38,34 @@ namespace ToDoAppBackend.Controllers
             return ItemToDTO(todoItem);
         }
 
-        // PUT: api/TodoItems/5
+        // PUT: api/TaskItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTodoItem(long id, TaskItemDTO taskDto)
+        public async Task<IActionResult> PutTaskItem(long id, TaskItemDTO taskDto)
         {
             if (id != taskDto.Id)
             {
                 return BadRequest();
             }
 
-            var todoItem = await _context.TodoItems.FindAsync(id);
-            if (todoItem == null)
+            var taskItem = await _context.TaskItems.FindAsync(id);
+            if (taskItem == null)
             {
                 return NotFound();
             }
 
-            todoItem.Name = taskDto.Name;
-            todoItem.TaskState = taskDto.TaskState;
-            todoItem.CreatedAt = taskDto.CreatedAt;
-            todoItem.UpdatedAt = DateTime.Now;
-            todoItem.SubTasks = taskDto.SubTasks;
+            taskItem.Name = taskDto.Name;
+            taskItem.TaskMessage = taskDto.TaskMessage;
+            taskItem.TaskState = taskDto.TaskState;
+            taskItem.CreatedAt = taskDto.CreatedAt;
+            taskItem.UpdatedAt = DateTime.Now;
+            taskItem.SubTasks = taskDto.SubTasks;
 
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException) when (!TodoItemExists(id))
+            catch (DbUpdateConcurrencyException) when (!this.TaskItemExists(id))
             {
                 return NotFound();
             }
@@ -72,10 +73,10 @@ namespace ToDoAppBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/TodoItems
+        // POST: api/TaskItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TaskItemDTO>> PostTodoItem(TaskItemDTO taskDto)
+        public async Task<ActionResult<TaskItemDTO>> PostTaskItem(TaskItemDTO taskDto)
         {
             var todoItem = new TaskItem
             {
@@ -83,34 +84,34 @@ namespace ToDoAppBackend.Controllers
                     Name = taskDto.Name
             };
 
-            _context.TodoItems.Add(todoItem);
+            _context.TaskItems.Add(todoItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(
-                                   nameof(GetTodoItem),
+                                   nameof(this.GetTaskItem),
                                    new { id = todoItem.Id },
                                    ItemToDTO(todoItem));
         }
 
-        // DELETE: api/TodoItems/5
+        // DELETE: api/TaskItems/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodoItem(long id)
+        public async Task<IActionResult> DeleteTaskItem(long id)
         {
-            var todoItem = await _context.TodoItems.FindAsync(id);
+            var todoItem = await _context.TaskItems.FindAsync(id);
             if (todoItem == null)
             {
                 return NotFound();
             }
 
-            _context.TodoItems.Remove(todoItem);
+            _context.TaskItems.Remove(todoItem);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool TodoItemExists(long id)
+        private bool TaskItemExists(long id)
         {
-            return _context.TodoItems.Any(e => e.Id == id);
+            return _context.TaskItems.Any(e => e.Id == id);
         }
 
         /// <summary>

@@ -9,6 +9,6 @@ namespace ToDoAppBackend.Models
         {
         }
 
-        public DbSet<TaskItem> TodoItems { get; set; } = null!;
+        public DbSet<TaskItem> TaskItems { get; set; } = null!;
     }
 }
