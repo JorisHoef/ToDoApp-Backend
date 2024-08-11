@@ -2,9 +2,9 @@
 
 namespace ToDoAppBackend.Models
 {
-    public class TaskContext : DbContext
+    public class TaskItemContext : DbContext
     {
-        public TaskContext(DbContextOptions<TaskContext> options)
+        public TaskItemContext(DbContextOptions<TaskItemContext> options)
                 : base(options)
         {
         }

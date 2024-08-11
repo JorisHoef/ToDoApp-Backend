@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoAppBackend.Models;
+using ToDoAppBackend.Services;
 
 namespace ToDoAppBackend
 {
@@ -28,14 +29,16 @@ namespace ToDoAppBackend
             });
 
             AddDbContexts(services);
-            
+
+            services.AddTransient<LinkCreator>();
+            services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
 
         private static void AddDbContexts(IServiceCollection services)
         {
-            services.AddDbContext<TaskContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+            services.AddDbContext<TaskItemContext>(opt => opt.UseInMemoryDatabase("TodoList"));
         }
         
         public static void Configure(WebApplication app, IWebHostEnvironment env)
