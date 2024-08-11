@@ -13,19 +13,10 @@ namespace ToDoAppBackend.Models
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public ICollection<TaskItem>? SubTasks { get; set; }
     }
-
-    /// <summary>
-    /// This relation aims to connect a task with other tasks that are being referenced in the Task itself
-    /// </summary>
-    public class TaskRelation
-    {
-        public TaskItem TaskItem { get; set; }
-        public ICollection<TaskItem> ReferencedTaskList { get; set; }
-    }
-
+    
     public class TaskMessage
     {
-        public string? Message { get; set; } //Example string: "This task can be completed after task {x.Id} is completed". Where task {x} references a task that already exists by Id
-        public ICollection<TaskItem> TaskItem { get; set; }
+        public string? Message { get; set; } // Example: "This task can be completed after task {123} is completed."
+        public ICollection<long> ReferencedTaskIds { get; set; } // Store only IDs
     }
 }

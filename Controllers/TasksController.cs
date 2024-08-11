@@ -28,14 +28,37 @@ namespace ToDoAppBackend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItemDTO>> GetTaskItem(long id)
         {
-            var todoItem = await _context.TaskItems.FindAsync(id);
-
-            if (todoItem == null)
+            var taskItem = await _context.TaskItems
+                                         .Include(t => t.TaskMessage)
+                                         .FirstOrDefaultAsync(t => t.Id == id);
+            if (taskItem == null)
             {
                 return NotFound();
             }
+            
+            var resolvedTaskMessage = this.ResolvedTaskMessage(taskItem.TaskMessage);
+            taskItem.TaskMessage.Message = resolvedTaskMessage;
+            return ItemToDTO(taskItem);
+        }
+        
+        /// <summary>
+        /// Resolves taskmessage to turn the taskID into a generated link that leads to another task with this Id
+        /// </summary>
+        /// <param name="taskMessage"></param>
+        /// <returns></returns>
+        private string? ResolvedTaskMessage(TaskMessage taskMessage)
+        {
+            var resolvedMessage = taskMessage.Message;
 
-            return ItemToDTO(todoItem);
+            if (resolvedMessage == null) return null;
+            
+            foreach (var taskId in taskMessage.ReferencedTaskIds)
+            {
+                var task = GetTaskById(taskId);
+                resolvedMessage = resolvedMessage.Replace($"{{{taskId}}}", $"<a href='/tasks/{taskId}'>{task.Name}</a>"); //Can apparently create links from DB, thanks chatGPT
+            }
+
+            return resolvedMessage;
         }
 
         // PUT: api/TaskItems/5
@@ -112,6 +135,11 @@ namespace ToDoAppBackend.Controllers
         private bool TaskItemExists(long id)
         {
             return _context.TaskItems.Any(e => e.Id == id);
+        }
+        
+        private TaskItem GetTaskById(long id)
+        {
+            return this._context.TaskItems.First(x => x.Id == id);
         }
 
         /// <summary>
