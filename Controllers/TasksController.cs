@@ -126,6 +126,7 @@ namespace ToDoAppBackend.Controllers
             {
                     Id = taskItem.Id, 
                     Name = taskItem.Name, 
+                    TaskMessage = taskItem.TaskMessage,
                     TaskState = taskItem.TaskState,
                     CreatedAt = taskItem.CreatedAt,
                     UpdatedAt = taskItem.UpdatedAt,

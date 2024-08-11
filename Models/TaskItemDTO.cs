@@ -9,7 +9,7 @@ namespace ToDoAppBackend.Models
     {
         public long Id { get; set; }
         public string? Name { get; set; }
-        public string? TaskMessage { get; set; }
+        public TaskMessage TaskMessage { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TaskState TaskState { get; set; } = TaskState.OPEN;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
