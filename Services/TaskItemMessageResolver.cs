@@ -31,7 +31,7 @@ namespace ToDoAppBackend.Services
                     var task = this.GetTaskById(taskId);
                     if (task?.Name != null)
                     {
-                        var createdLink = this._linkCreator.CreateLink<TaskItem>(task.Id, task.Name);
+                        var createdLink = this._linkCreator.CreateLink<TaskItem>(task.Id);
                         resolvedMessage = resolvedMessage.Replace($"{{{taskId}}}", $"{createdLink}");
                     }
                     else
