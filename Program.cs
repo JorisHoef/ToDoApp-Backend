@@ -47,6 +47,13 @@ namespace ToDoAppBackend
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                
+                // Redirect root URL to Swagger
+                app.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/swagger");
+                    return Task.CompletedTask;
+                });
             }
 
             app.UseHttpsRedirection();
@@ -54,6 +61,8 @@ namespace ToDoAppBackend
             app.UseAuthorization();
 
             app.MapControllers();
+            
+
         }
     }
 }
