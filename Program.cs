@@ -9,33 +9,33 @@ namespace ToDoAppBackend
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            
             // Add services to the container.
             ConfigureServices(builder.Services);
-
+            
             var app = builder.Build();
-
+            
             // Configure the HTTP request pipeline.
             Configure(app, builder.Environment);
-
+            
             app.Run();
         }
-
+        
         public static void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.WriteIndented = true;
             });
-
+            
             AddDbContexts(services);
-
+            
             services.AddTransient<LinkCreator>();
             services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
-
+        
         private static void AddDbContexts(IServiceCollection services)
         {
             services.AddDbContext<TaskItemContext>(opt => opt.UseInMemoryDatabase("TodoList"));
@@ -55,14 +55,12 @@ namespace ToDoAppBackend
                     return Task.CompletedTask;
                 });
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
             
-
+            app.UseHttpsRedirection();
+            
+            app.UseAuthorization();
+            
+            app.MapControllers();
         }
     }
 }

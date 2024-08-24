@@ -17,7 +17,7 @@ namespace ToDoAppBackend.Controllers
             this._itemContext = itemContext;
             this._taskItemMessageResolver = taskItemMessageResolver;
         }
-
+        
         // GET: api/TaskItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
@@ -26,7 +26,7 @@ namespace ToDoAppBackend.Controllers
                              .Include(t => t.TaskItemMessage)
                              .ToListAsync();
         }
-
+        
         // GET: api/TaskItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItem>> GetTask(long id)
@@ -38,13 +38,13 @@ namespace ToDoAppBackend.Controllers
             {
                 return NotFound();
             }
-
+            
             if (taskItem.TaskItemMessage != null)
             {
                 var resolvedTaskMessage = this._taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
                 taskItem.TaskItemMessage.Message = resolvedTaskMessage;
             }
-
+            
             return taskItem;
         }
         
@@ -57,13 +57,13 @@ namespace ToDoAppBackend.Controllers
             {
                 return BadRequest();
             }
-
+            
             var existingTask = await this._itemContext.TaskItems.FindAsync(id);
             if (existingTask == null)
             {
                 return NotFound();
             }
-
+            
             // Update the existing taskItem item
             existingTask.Name = taskItem.Name;
             existingTask.TaskItemMessage = taskItem.TaskItemMessage;
@@ -71,7 +71,7 @@ namespace ToDoAppBackend.Controllers
             existingTask.CreatedAt = taskItem.CreatedAt;
             existingTask.UpdatedAt = DateTime.Now;
             existingTask.SubTasks = taskItem.SubTasks;
-
+            
             try
             {
                 await this._itemContext.SaveChangesAsync();
@@ -80,10 +80,10 @@ namespace ToDoAppBackend.Controllers
             {
                 return NotFound();
             }
-
+            
             return NoContent();
         }
-
+        
         // POST: api/TaskItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -91,10 +91,10 @@ namespace ToDoAppBackend.Controllers
         {
             this._itemContext.TaskItems.Add(taskItem);
             await this._itemContext.SaveChangesAsync();
-
+            
             return CreatedAtAction(nameof(this.GetTask), new { id = taskItem.Id }, taskItem);
         }
-
+        
         // DELETE: api/TaskItems/5
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteTask(long id)
@@ -104,13 +104,13 @@ namespace ToDoAppBackend.Controllers
             {
                 return NotFound();
             }
-
+            
             this._itemContext.TaskItems.Remove(taskItem);
             await this._itemContext.SaveChangesAsync();
-
+            
             return NoContent();
         }
-
+        
         private bool TaskExists(long id)
         {
             return this._itemContext.TaskItems.Any(e => e.Id == id);
