@@ -12,7 +12,7 @@ namespace ToDoAppBackend.Services
         {
             this._itemContext = itemContext;
             this._linkCreator = linkCreator;
-            _baseUri = baseUri;
+            this._baseUri = baseUri;
         }
 
         /// <summary>
