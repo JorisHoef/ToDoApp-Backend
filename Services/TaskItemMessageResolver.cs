@@ -6,11 +6,13 @@ namespace ToDoAppBackend.Services
     {
         private readonly TaskItemContext _itemContext;
         private readonly LinkCreator _linkCreator;
-        
-        public TaskItemMessageResolver(TaskItemContext itemContext, LinkCreator linkCreator)
+        private readonly Uri _baseUri;
+
+        public TaskItemMessageResolver(TaskItemContext itemContext, LinkCreator linkCreator, Uri baseUri)
         {
             this._itemContext = itemContext;
             this._linkCreator = linkCreator;
+            _baseUri = baseUri;
         }
 
         /// <summary>
@@ -31,12 +33,12 @@ namespace ToDoAppBackend.Services
                     var task = this.GetTaskById(taskId);
                     if (task?.Name != null)
                     {
-                        var createdLink = this._linkCreator.CreateLink<TaskItem>(task.Id);
-                        resolvedMessage = resolvedMessage.Replace($"{{{taskId}}}", $"{createdLink}");
+                        var createdLink = _linkCreator.CreateLink<TaskItem>(_baseUri, task.Id);
+                        resolvedMessage = resolvedMessage.Replace($"{{TASK_ID:{taskId}}}", $"{createdLink}");
                     }
                     else
                     {
-                        resolvedMessage = resolvedMessage.Replace($"{{{taskId}}}", "[TaskItem not found]");
+                        resolvedMessage = resolvedMessage.Replace($"{{TASK_ID:{taskId}}}", "[TaskItem not found]");
                     }
                 }
             }

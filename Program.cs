@@ -9,9 +9,11 @@ namespace ToDoAppBackend
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
-            // Add services to the container.
-            ConfigureServices(builder.Services);
+
+            // Access BaseUri from configuration
+            var baseUri = builder.Configuration["BaseUri"];
+
+            ConfigureServices(builder.Services, baseUri);
             
             var app = builder.Build();
             
@@ -20,8 +22,8 @@ namespace ToDoAppBackend
             
             app.Run();
         }
-        
-        public static void ConfigureServices(IServiceCollection services)
+
+        public static void ConfigureServices(IServiceCollection services, string baseUri)
         {
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -32,6 +34,9 @@ namespace ToDoAppBackend
             
             services.AddTransient<LinkCreator>();
             services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
+
+            services.AddSingleton(new Uri(baseUri)); //add baseUri to application
+            
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }

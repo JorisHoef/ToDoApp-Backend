@@ -15,17 +15,19 @@
             var typeName = typeof(T).Name.ToLower();
             return $"<a href='/{typeName}s/{id}'>{displayName}</a>";
         }
-        
+
         /// <summary>
         /// Just create the link based on type name
         /// </summary>
+        /// <param name="baseUri"></param>
         /// <param name="id"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public string CreateLink<T>(long id)
+        public string CreateLink<T>(Uri baseUri, long id)
         {
             var typeName = typeof(T).Name.ToLower();
-            return $"/{typeName}s/{id}";
+            Uri fullUri = new Uri(baseUri, $"api/{typeName}s/{id}");
+            return fullUri.ToString();
         }
     }
 }
