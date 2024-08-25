@@ -60,7 +60,7 @@ namespace ToDoAppBackend.Controllers
         // PUT: api/TaskItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(long id, TaskItem taskItem)
+        public async Task<IActionResult> PutTask(long id, [FromBody] TaskItem taskItem)
         {
             if (id != taskItem.Id)
             {
@@ -89,8 +89,9 @@ namespace ToDoAppBackend.Controllers
             {
                 return NotFound();
             }
-            
-            return NoContent();
+    
+            // Return the updated task item with a 200 OK status, including the updated timestamp
+            return Ok(new { UpdatedAt = existingTask.UpdatedAt });
         }
         
         // POST: api/TaskItems
