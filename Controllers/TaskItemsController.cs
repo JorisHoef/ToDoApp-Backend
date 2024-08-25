@@ -22,11 +22,19 @@ namespace ToDoAppBackend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
         {
-            return await this._itemContext.TaskItems
-                             .Include(t => t.TaskItemMessage)
-                             .ToListAsync();
+            var taskItems = await _itemContext.TaskItems
+                                              .Include(t => t.TaskItemMessage)
+                                              .ToListAsync();
+
+            foreach (var taskItem in taskItems)
+            {
+                if (taskItem.TaskItemMessage != null)
+                    taskItem.TaskItemMessage.Message =
+                            _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
+            }
+            return taskItems;
         }
-        
+
         // GET: api/TaskItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItem>> GetTask(long id)
