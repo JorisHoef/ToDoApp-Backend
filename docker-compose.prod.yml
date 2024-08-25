@@ -2,30 +2,27 @@
   todoapp-backend:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     ports:
-      - "5000:8080"
-      - "5001:443"
+      - "80:80"  # Map host port 80 to container port 80
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Database=TestDatabase;User=sa;Password=${DB_PASSWORD};
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
       - db
-    volumes:
-      - .:/app
     networks:
-      - dev-network
+      - prod-network
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      SA_PASSWORD: ${DB_PASSWORD}  #Should match the 'sa' password for now in .env file
+      SA_PASSWORD: ${DB_PASSWORD} #Should match the 'sa' password for now in .env file
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
     networks:
-      - dev-network
+      - prod-network
 
 networks:
-  dev-network:
+  prod-network:
     driver: bridge
