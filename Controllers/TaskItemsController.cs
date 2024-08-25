@@ -29,8 +29,9 @@ namespace ToDoAppBackend.Controllers
             foreach (var taskItem in taskItems)
             {
                 if (taskItem.TaskItemMessage != null)
-                    taskItem.TaskItemMessage.Message =
-                            _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
+                {
+                    taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
+                }
             }
             return taskItems;
         }
