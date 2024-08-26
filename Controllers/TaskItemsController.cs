@@ -91,7 +91,7 @@ namespace ToDoAppBackend.Controllers
             }
     
             // Return the updated task item with a 200 OK status, including the updated timestamp
-            return Ok(new { UpdatedAt = existingTask.UpdatedAt });
+            return Ok(existingTask);
         }
         
         // POST: api/TaskItems
