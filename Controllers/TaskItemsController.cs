@@ -28,10 +28,7 @@ namespace ToDoAppBackend.Controllers
 
             foreach (var taskItem in taskItems)
             {
-                if (taskItem.TaskItemMessage != null)
-                {
-                    taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
-                }
+                ProcessTaskItem(taskItem);
             }
             return taskItems;
         }
@@ -48,11 +45,7 @@ namespace ToDoAppBackend.Controllers
                 return NotFound();
             }
             
-            if (taskItem.TaskItemMessage != null)
-            {
-                var resolvedTaskMessage = this._taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
-                taskItem.TaskItemMessage.Message = resolvedTaskMessage;
-            }
+            ProcessTaskItem(taskItem);
             
             return taskItem;
         }
@@ -90,6 +83,7 @@ namespace ToDoAppBackend.Controllers
                 return NotFound();
             }
     
+            ProcessTaskItem(existingTask);
             // Return the updated task item with a 200 OK status
             return Ok(existingTask);
         }
@@ -102,6 +96,7 @@ namespace ToDoAppBackend.Controllers
             this._itemContext.TaskItems.Add(taskItem);
             await this._itemContext.SaveChangesAsync();
             
+            ProcessTaskItem(taskItem);
             return CreatedAtAction(nameof(this.GetTask), new { id = taskItem.Id }, taskItem);
         }
         
@@ -124,6 +119,19 @@ namespace ToDoAppBackend.Controllers
         private bool TaskExists(long id)
         {
             return this._itemContext.TaskItems.Any(e => e.Id == id);
+        }
+        
+        private void ProcessTaskItem(TaskItem taskItem)
+        {
+            if (taskItem.TaskItemMessage != null)
+            {
+                taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
+            }
+
+            if (taskItem.DeadLineAt >= DateTime.Now)
+            {
+                taskItem.TaskDataSate = TaskDataState.STALE;
+            }
         }
     }
 }
