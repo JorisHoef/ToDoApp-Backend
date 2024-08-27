@@ -1,6 +1,6 @@
 ﻿namespace ToDoAppBackend.Models
 {
-    public enum TaskItemState
+    public enum TaskDataState
     {
         OPEN,
         CLOSED,

@@ -76,7 +76,7 @@ namespace ToDoAppBackend.Controllers
             // Update the existing taskItem item
             existingTask.Name = taskItem.Name;
             existingTask.TaskItemMessage = taskItem.TaskItemMessage;
-            existingTask.TaskItemState = taskItem.TaskItemState;
+            existingTask.TaskDataState = taskItem.TaskDataState;
             existingTask.CreatedAt = taskItem.CreatedAt;
             existingTask.UpdatedAt = DateTime.Now;
             existingTask.SubTasks = taskItem.SubTasks;

@@ -10,7 +10,7 @@ namespace ToDoAppBackend.Models
         public string? Name { get; set; }
         public TaskItemMessage? TaskItemMessage { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public TaskItemState TaskItemState { get; set; } = TaskItemState.OPEN;
+        public TaskDataState TaskDataState { get; set; } = TaskDataState.OPEN;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public ICollection<TaskItem>? SubTasks { get; set; } = null;
