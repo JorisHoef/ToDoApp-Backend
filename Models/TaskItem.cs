@@ -13,6 +13,8 @@ namespace ToDoAppBackend.Models
         public TaskDataState TaskDataState { get; set; } = TaskDataState.OPEN;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime CompletedAt { get; set; }
+        public DateTime DeadlineAt { get; set; }
         public ICollection<TaskItem>? SubTasks { get; set; } = null;
     }
 }
