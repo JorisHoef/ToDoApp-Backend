@@ -128,9 +128,9 @@ namespace ToDoAppBackend.Controllers
                 taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
             }
 
-            if (taskItem.DeadLineAt >= DateTime.Now)
+            if (taskItem.DeadlineAt >= DateTime.Now)
             {
-                taskItem.TaskDataSate = TaskDataState.STALE;
+                taskItem.TaskDataState = TaskDataState.STALE;
             }
         }
     }
