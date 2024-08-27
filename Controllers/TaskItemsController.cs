@@ -90,7 +90,7 @@ namespace ToDoAppBackend.Controllers
                 return NotFound();
             }
     
-            // Return the updated task item with a 200 OK status, including the updated timestamp
+            // Return the updated task item with a 200 OK status
             return Ok(existingTask);
         }
         
