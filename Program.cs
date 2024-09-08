@@ -9,36 +9,33 @@ namespace ToDoAppBackend
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Access BaseUri from configuration
-            var baseUri = builder.Configuration["BaseUri"];
-
-            ConfigureServices(builder.Services, baseUri);
             
+            var apiBaseUrl = Environment.GetEnvironmentVariable("API_SERVER") ?? "http://localhost/";
+            var apiUri = new Uri(apiBaseUrl);
+
+            ConfigureServices(builder.Services, apiUri);
+    
             var app = builder.Build();
-            
+    
             // Configure the HTTP request pipeline.
             Configure(app, builder.Environment);
-            
+    
             app.Run();
         }
 
-        public static void ConfigureServices(IServiceCollection services, string baseUri)
+        public static void ConfigureServices(IServiceCollection services, Uri apiUri)
         {
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.WriteIndented = true;
             });
-    
+
             AddDbContexts(services);
-    
+
             services.AddTransient<LinkCreator>();
             services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
 
-            // Read API_SERVER from environment variables, fallback to default URL
-            var apiBaseUrl = Environment.GetEnvironmentVariable("API_SERVER") ?? "http://localhost/";
-            var apiUri = new Uri(apiBaseUrl);
-            
+            // Configure API client
             services.AddHttpClient("ApiClient", client =>
             {
                 client.BaseAddress = apiUri;
