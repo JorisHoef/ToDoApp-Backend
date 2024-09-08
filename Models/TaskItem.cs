@@ -16,5 +16,6 @@ namespace ToDoAppBackend.Models
         public DateTime CompletedAt { get; set; }
         public DateTime DeadlineAt { get; set; }
         public ICollection<TaskItem>? SubTasks { get; set; } = null;
+        public long? ParentTaskId { get; set; }
     }
 }
