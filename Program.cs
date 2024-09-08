@@ -29,14 +29,21 @@ namespace ToDoAppBackend
             {
                 options.JsonSerializerOptions.WriteIndented = true;
             });
-            
+    
             AddDbContexts(services);
-            
+    
             services.AddTransient<LinkCreator>();
             services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
 
-            services.AddSingleton(new Uri(baseUri)); //add baseUri to application
-            
+            // Read API_SERVER from environment variables
+            var apiBaseUrl = Environment.GetEnvironmentVariable("API_SERVER") ?? "http://localhosthenkie";
+            services.AddHttpClient("ApiClient", client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            });
+
+            services.AddSingleton(new Uri(baseUri)); // Add baseUri to application
+    
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
