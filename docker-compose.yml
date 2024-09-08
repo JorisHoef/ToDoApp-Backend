@@ -3,22 +3,18 @@
     container_name: ToDoApp-Backend
     build:
       context: .
-      dockerfile: ${DOCKERFILE:-Dockerfile}
+      dockerfile: Dockerfile  # Explicitly specify the Dockerfile if needed
     ports:
-      - "${APP_PORT:-5000}:8080" # Default to 5000 for development, can override with environment variable
-      - "${SSL_PORT:-5001}:443"  # Default to 5001 for development, can override with environment variable
+      - "${APP_PORT:-5000}:8080"  # Map port 8080 in the container to APP_PORT on the host
+      - "${SSL_PORT:-5001}:8081"  # Map port 8081 in the container to SSL_PORT on the host
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Database=TestDatabase;User=sa;Password=${DB_PASSWORD};
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - API_SERVER=${API_SERVER}
     depends_on:
       - db
-    volumes:
-      - .:/app
     networks:
       - app-network
-    profiles:
-      - dev
-      - prod
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -29,9 +25,6 @@
       - "1433:1433"
     networks:
       - app-network
-    profiles:
-      - dev
-      - prod
 
 networks:
   app-network:
