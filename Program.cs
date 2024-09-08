@@ -35,15 +35,16 @@ namespace ToDoAppBackend
             services.AddTransient<LinkCreator>();
             services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
 
-            // Read API_SERVER from environment variables
-            var apiBaseUrl = Environment.GetEnvironmentVariable("API_SERVER") ?? "http://localhosthenkie";
+            // Read API_SERVER from environment variables, fallback to default URL
+            var apiBaseUrl = Environment.GetEnvironmentVariable("API_SERVER") ?? "http://localhost/";
+            var apiUri = new Uri(apiBaseUrl);
+            
             services.AddHttpClient("ApiClient", client =>
             {
-                client.BaseAddress = new Uri(apiBaseUrl);
+                client.BaseAddress = apiUri;
             });
 
-            services.AddSingleton(new Uri(baseUri)); // Add baseUri to application
-    
+            services.AddSingleton(apiUri);
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
