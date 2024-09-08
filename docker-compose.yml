@@ -1,5 +1,6 @@
 ﻿services:
   todoapp-backend:
+    container_name: ToDoApp-Backend
     build:
       context: .
       dockerfile: ${DOCKERFILE:-Dockerfile}
