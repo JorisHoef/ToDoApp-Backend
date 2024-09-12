@@ -5,6 +5,7 @@ WORKDIR /src
 # Copy csproj and restore as distinct layers
 COPY ["ToDoAppBackend.csproj", "./"]
 RUN dotnet restore
+RUN dotnet tool install --global dotnet-ef
 
 # Copy the rest of the code and build
 COPY . ./
