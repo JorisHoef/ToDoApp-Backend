@@ -53,59 +53,77 @@ namespace ToDoAppBackend.Controllers
             return taskItem;
         }
         
-        // PUT: api/TaskItems/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(long id, [FromBody] TaskItem taskItem)
-        {
-            if (id != taskItem.Id)
-            {
-                return BadRequest();
-            }
-            
-            var existingTask = await _itemContext.TaskItems.FindAsync(id);
-            if (existingTask == null)
-            {
-                return NotFound();
-            }
-            
-            // Update the existing task item
-            existingTask.Name = taskItem.Name;
-            existingTask.TaskItemMessage = taskItem.TaskItemMessage;
-            existingTask.TaskDataState = taskItem.TaskDataState;
-            existingTask.CreatedAt = taskItem.CreatedAt;
-            existingTask.UpdatedAt = DateTime.Now;
-            existingTask.SubTasks = taskItem.SubTasks;
-
-            try
-            {
-                await _itemContext.SaveChangesAsync();
-                ProcessTaskItem(existingTask);
-            }
-            catch (Exception ex)
-            {
-                _taskItemLogger.LogTaskItem(existingTask, ex);
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            }
-            
-            return Ok(existingTask);
-        }
-
-        // POST: api/TaskItems
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
         {
             try
             {
+                if (taskItem == null)
+                {
+                    return BadRequest("Task item cannot be null.");
+                }
+
                 _itemContext.TaskItems.Add(taskItem);
                 await _itemContext.SaveChangesAsync();
                 ProcessTaskItem(taskItem);
                 return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
             }
+            catch (DbUpdateException dbEx)
+            {
+                _taskItemLogger.LogTaskItem(taskItem, dbEx);
+                return StatusCode(StatusCodes.Status400BadRequest, $"Database update error: {dbEx.Message}");
+            }
             catch (Exception ex)
             {
                 _taskItemLogger.LogTaskItem(taskItem, ex);
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
             }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTask(long id, [FromBody] TaskItem taskItem)
+        {
+            if (taskItem == null)
+            {
+                return BadRequest("Task item cannot be null.");
+            }
+
+            if (id != taskItem.Id)
+            {
+                return BadRequest("ID mismatch.");
+            }
+
+            var existingTask = await _itemContext.TaskItems.FindAsync(id);
+            if (existingTask == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // Update the existing task item
+                existingTask.Name = taskItem.Name;
+                existingTask.TaskItemMessage = taskItem.TaskItemMessage;
+                existingTask.TaskDataState = taskItem.TaskDataState;
+                existingTask.CreatedAt = taskItem.CreatedAt;
+                existingTask.UpdatedAt = DateTime.Now;
+                existingTask.SubTasks = taskItem.SubTasks;
+
+                await _itemContext.SaveChangesAsync();
+                ProcessTaskItem(existingTask);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _taskItemLogger.LogTaskItem(existingTask, dbEx);
+                return StatusCode(StatusCodes.Status400BadRequest, $"Database update error: {dbEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                _taskItemLogger.LogTaskItem(existingTask, ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
+            }
+            
+            return Ok(existingTask);
         }
 
         // DELETE: api/TaskItems/5
