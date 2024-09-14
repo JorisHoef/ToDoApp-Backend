@@ -5,8 +5,8 @@
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${APP_PORT:-5000}:8080"
-      - "${SSL_PORT:-5001}:8081"
+      - "8080:8080"  # Internal mapping for Apache reverse proxy
+      - "8081:8081"  # For SSL, in case it's needed
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
       - API_SERVER=${API_SERVER}
