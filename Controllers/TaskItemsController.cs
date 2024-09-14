@@ -52,36 +52,10 @@ namespace ToDoAppBackend.Controllers
             
             return taskItem;
         }
-        
-        [HttpPost]
-        public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
-        {
-            try
-            {
-                if (taskItem == null)
-                {
-                    return BadRequest("Task item cannot be null.");
-                }
 
-                _itemContext.TaskItems.Add(taskItem);
-                await _itemContext.SaveChangesAsync();
-                ProcessTaskItem(taskItem);
-                return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
-            }
-            catch (DbUpdateException dbEx)
-            {
-                _taskItemLogger.LogTaskItem(taskItem, dbEx);
-                return StatusCode(StatusCodes.Status400BadRequest, $"Database update error: {dbEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                _taskItemLogger.LogTaskItem(taskItem, ex);
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
-            }
-        }
-
+        // PUT: api/TaskItems/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(long id, [FromBody] TaskItem taskItem)
+        public async Task<ActionResult<TaskItem>> PutTask(long id, [FromBody] TaskItem taskItem)
         {
             if (taskItem == null)
             {
@@ -111,21 +85,45 @@ namespace ToDoAppBackend.Controllers
 
                 await _itemContext.SaveChangesAsync();
                 ProcessTaskItem(existingTask);
+                return Ok(existingTask);
             }
             catch (DbUpdateException dbEx)
             {
-                _taskItemLogger.LogTaskItem(existingTask, dbEx);
-                return StatusCode(StatusCodes.Status400BadRequest, $"Database update error: {dbEx.Message}");
+                return _taskItemLogger.HandleDbUpdateException(dbEx);
             }
             catch (Exception ex)
             {
-                _taskItemLogger.LogTaskItem(existingTask, ex);
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
+                return _taskItemLogger.HandleException(ex, existingTask);
             }
-            
-            return Ok(existingTask);
         }
 
+        // POST: api/TaskItems
+        [HttpPost]
+        public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
+        {
+            if (taskItem == null)
+            {
+                return BadRequest("Task item cannot be null.");
+            }
+
+            try
+            {
+                _itemContext.TaskItems.Add(taskItem);
+                await _itemContext.SaveChangesAsync();
+                ProcessTaskItem(taskItem);
+                return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return _taskItemLogger.HandleDbUpdateException(dbEx);
+            }
+            catch (Exception ex)
+            {
+                var result = _taskItemLogger.HandleException(ex, taskItem);
+                return result;
+            }
+        }
+        
         // DELETE: api/TaskItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(long id)
