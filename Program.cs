@@ -92,9 +92,10 @@ namespace ToDoAppBackend
         {
             if (env.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
-
+        
                 // Redirect root URL to Swagger
                 app.MapGet("/", context =>
                 {
@@ -102,7 +103,12 @@ namespace ToDoAppBackend
                     return Task.CompletedTask;
                 });
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
+    
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
