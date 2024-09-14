@@ -22,10 +22,6 @@ public class Program
         // Configure the HTTP request pipeline.
         Configure(app, builder.Environment);
 
-        // Listen on both HTTP and HTTPS
-        app.Urls.Add("http://*:8080");
-        app.Urls.Add("https://*:8081");
-
         app.Run();
     }
 
