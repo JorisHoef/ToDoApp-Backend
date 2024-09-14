@@ -27,10 +27,14 @@ namespace ToDoAppBackend.Logging
             }
         }
 
+        public void LogInfo(string message)
+        {
+            _logger.LogInformation(message);
+        }
+
         public ActionResult<TaskItem> HandleDbUpdateException(DbUpdateException ex)
         {
             _logger.LogError(ex, "Database update error");
-            // Return a BadRequest with a specific message if required
             return new BadRequestObjectResult($"Database update error: {ex.Message}");
         }
 
@@ -45,7 +49,6 @@ namespace ToDoAppBackend.Logging
                 _logger.LogError(ex, "An error occurred");
             }
             
-            // Return a generic error message or a custom one if required
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }

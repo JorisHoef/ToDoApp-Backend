@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ToDoAppBackend.Models;
 using ToDoAppBackend.Services;
 using ToDoAppBackend.Logging;
@@ -66,6 +67,8 @@ namespace ToDoAppBackend.Controllers
             {
                 return BadRequest("ID mismatch.");
             }
+            
+            _taskItemLogger.LogInfo($"PUT request received with body: {JsonConvert.SerializeObject(taskItem)}");
 
             var existingTask = await _itemContext.TaskItems.FindAsync(id);
             if (existingTask == null)
@@ -106,6 +109,8 @@ namespace ToDoAppBackend.Controllers
                 return BadRequest("Task item cannot be null.");
             }
 
+            _taskItemLogger.LogInfo($"POST request received with body: {JsonConvert.SerializeObject(taskItem)}");
+            
             try
             {
                 _itemContext.TaskItems.Add(taskItem);
