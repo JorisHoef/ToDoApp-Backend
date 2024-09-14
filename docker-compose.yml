@@ -14,7 +14,7 @@
     depends_on:
       - db
     networks:
-      - todoapp-backend_app-network
+      - app-network
 
   db:
     image: postgres:15
@@ -27,11 +27,11 @@
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - todoapp-backend_app-network
+      - app-network
 
 volumes:
   postgres_data:
 
 networks:
-  todoapp-backend_app-network:
+  app-network:
     driver: bridge
