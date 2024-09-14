@@ -17,7 +17,7 @@ namespace ToDoAppBackend.Models
         public TaskItemMessage? TaskItemMessage { get; set; }
         
         [JsonProperty("taskDataState")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter))]
         public TaskDataState TaskDataState { get; set; } = TaskDataState.OPEN;
         
         [JsonProperty("createdAt")]
