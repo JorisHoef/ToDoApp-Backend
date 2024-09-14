@@ -11,11 +11,13 @@ namespace ToDoAppBackend.Controllers
     {
         private readonly TaskItemContext _itemContext;
         private readonly ITaskItemMessageResolver _taskItemMessageResolver;
-        
-        public TaskItemsController(TaskItemContext itemContext, ITaskItemMessageResolver taskItemMessageResolver)
+        private readonly ILogger<TaskItemsController> _logger;
+
+        public TaskItemsController(TaskItemContext itemContext, ITaskItemMessageResolver taskItemMessageResolver, ILogger<TaskItemsController> logger)
         {
             this._itemContext = itemContext;
             this._taskItemMessageResolver = taskItemMessageResolver;
+            this._logger = logger;
         }
         
         // GET: api/TaskItems
@@ -93,11 +95,18 @@ namespace ToDoAppBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
         {
-            this._itemContext.TaskItems.Add(taskItem);
-            await this._itemContext.SaveChangesAsync();
-            
-            ProcessTaskItem(taskItem);
-            return CreatedAtAction(nameof(this.GetTask), new { id = taskItem.Id }, taskItem);
+            try
+            {
+                this._itemContext.TaskItems.Add(taskItem);
+                await this._itemContext.SaveChangesAsync();
+                ProcessTaskItem(taskItem);
+                return CreatedAtAction(nameof(this.GetTask), new { id = taskItem.Id }, taskItem);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to create task item: {ex.Message}\n{ex.StackTrace}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
         
         // DELETE: api/TaskItems/5
