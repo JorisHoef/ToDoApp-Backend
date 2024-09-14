@@ -8,7 +8,7 @@ RUN dotnet restore
 RUN dotnet tool install --global dotnet-ef
 
 # Copy the rest of the code and build
-COPY . ./
+COPY . ./ 
 RUN dotnet publish "ToDoAppBackend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Use the ASP.NET Core runtime image for running the app
@@ -16,9 +16,14 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+EXPOSE 443  # Expose HTTPS port
 
 # Copy the published app from the build stage
 COPY --from=build /app/publish .
+
+# Copy the SSL certificates
+COPY /path/to/your/certificate.crt /etc/ssl/certs/
+COPY /path/to/your/private.key /etc/ssl/private/
 
 # Set the entry point to run the app
 ENTRYPOINT ["dotnet", "ToDoAppBackend.dll"]
