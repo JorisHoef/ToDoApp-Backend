@@ -5,8 +5,8 @@
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"  # Internal mapping for Apache reverse proxy
-      - "8081:8081"  # For SSL, in case it's needed
+      - "8080:8080"
+      - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
       - API_SERVER=${API_SERVER}
@@ -23,7 +23,7 @@
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5433:5432"  # Ensure this port is not already in use
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
