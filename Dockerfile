@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
-EXPOSE 443  # Expose HTTPS port
+EXPOSE 443
 
 # Copy the published app from the build stage
 COPY --from=build /app/publish .
