@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoAppBackend.Models;
 using ToDoAppBackend.Services;
+using ToDoAppBackend.Logging;
 
 namespace ToDoAppBackend.Controllers
 {
@@ -11,13 +12,13 @@ namespace ToDoAppBackend.Controllers
     {
         private readonly TaskItemContext _itemContext;
         private readonly ITaskItemMessageResolver _taskItemMessageResolver;
-        private readonly ILogger<TaskItemsController> _logger;
+        private readonly TaskItemLogger _taskItemLogger;
 
-        public TaskItemsController(TaskItemContext itemContext, ITaskItemMessageResolver taskItemMessageResolver, ILogger<TaskItemsController> logger)
+        public TaskItemsController(TaskItemContext itemContext, ITaskItemMessageResolver taskItemMessageResolver, TaskItemLogger taskItemLogger)
         {
-            this._itemContext = itemContext;
-            this._taskItemMessageResolver = taskItemMessageResolver;
-            this._logger = logger;
+            _itemContext = itemContext;
+            _taskItemMessageResolver = taskItemMessageResolver;
+            _taskItemLogger = taskItemLogger;
         }
         
         // GET: api/TaskItems
@@ -39,7 +40,7 @@ namespace ToDoAppBackend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItem>> GetTask(long id)
         {
-            var taskItem = await this._itemContext.TaskItems
+            var taskItem = await _itemContext.TaskItems
                                  .Include(t => t.TaskItemMessage)
                                  .FirstOrDefaultAsync(t => t.Id == id);
             if (taskItem == null)
@@ -53,7 +54,6 @@ namespace ToDoAppBackend.Controllers
         }
         
         // PUT: api/TaskItems/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(long id, [FromBody] TaskItem taskItem)
         {
@@ -62,84 +62,92 @@ namespace ToDoAppBackend.Controllers
                 return BadRequest();
             }
             
-            var existingTask = await this._itemContext.TaskItems.FindAsync(id);
+            var existingTask = await _itemContext.TaskItems.FindAsync(id);
             if (existingTask == null)
             {
                 return NotFound();
             }
             
-            // Update the existing taskItem item
+            // Update the existing task item
             existingTask.Name = taskItem.Name;
             existingTask.TaskItemMessage = taskItem.TaskItemMessage;
             existingTask.TaskDataState = taskItem.TaskDataState;
             existingTask.CreatedAt = taskItem.CreatedAt;
             existingTask.UpdatedAt = DateTime.Now;
             existingTask.SubTasks = taskItem.SubTasks;
-            
+
             try
             {
-                await this._itemContext.SaveChangesAsync();
+                await _itemContext.SaveChangesAsync();
+                ProcessTaskItem(existingTask);
             }
-            catch (DbUpdateConcurrencyException) when (!this.TaskExists(id))
+            catch (Exception ex)
             {
-                return NotFound();
+                _taskItemLogger.LogTaskItem(existingTask, ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
-    
-            ProcessTaskItem(existingTask);
-            // Return the updated task item with a 200 OK status
+            
             return Ok(existingTask);
         }
-        
+
         // POST: api/TaskItems
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
         {
             try
             {
-                this._itemContext.TaskItems.Add(taskItem);
-                await this._itemContext.SaveChangesAsync();
+                _itemContext.TaskItems.Add(taskItem);
+                await _itemContext.SaveChangesAsync();
                 ProcessTaskItem(taskItem);
-                return CreatedAtAction(nameof(this.GetTask), new { id = taskItem.Id }, taskItem);
+                return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to create task item: {ex.Message}\n{ex.StackTrace}");
+                _taskItemLogger.LogTaskItem(taskItem, ex);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
-        
+
         // DELETE: api/TaskItems/5
-        [HttpDelete("{id:long}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(long id)
         {
-            var taskItem = await this._itemContext.TaskItems.FindAsync(id);
+            var taskItem = await _itemContext.TaskItems.FindAsync(id);
             if (taskItem == null)
             {
                 return NotFound();
             }
             
-            this._itemContext.TaskItems.Remove(taskItem);
-            await this._itemContext.SaveChangesAsync();
+            _itemContext.TaskItems.Remove(taskItem);
+            await _itemContext.SaveChangesAsync();
             
             return NoContent();
         }
-        
+
         private bool TaskExists(long id)
         {
-            return this._itemContext.TaskItems.Any(e => e.Id == id);
+            return _itemContext.TaskItems.Any(e => e.Id == id);
         }
-        
+
         private void ProcessTaskItem(TaskItem taskItem)
         {
-            if (taskItem.TaskItemMessage != null)
+            try
             {
-                taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
-            }
+                if (taskItem.TaskItemMessage != null)
+                {
+                    taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
+                }
 
-            if (taskItem.DeadlineAt >= DateTime.Now)
+                if (taskItem.DeadlineAt >= DateTime.Now)
+                {
+                    taskItem.TaskDataState = TaskDataState.STALE;
+                }
+
+                _taskItemLogger.LogTaskItem(taskItem);
+            }
+            catch (Exception ex)
             {
-                taskItem.TaskDataState = TaskDataState.STALE;
+                _taskItemLogger.LogTaskItem(taskItem, ex);
             }
         }
     }

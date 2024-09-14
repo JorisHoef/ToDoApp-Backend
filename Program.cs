@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ToDoAppBackend.Logging;
 using ToDoAppBackend.Models;
 using ToDoAppBackend.Services;
 
@@ -49,6 +50,7 @@ namespace ToDoAppBackend
 
             AddDbContexts(services);
 
+            services.AddTransient<TaskItemLogger>();
             services.AddTransient<LinkCreator>();
             services.AddScoped<ITaskItemMessageResolver, TaskItemMessageResolver>();
 
@@ -62,6 +64,7 @@ namespace ToDoAppBackend
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
+
 
         private static void AddDbContexts(IServiceCollection services)
         {
