@@ -21,16 +21,16 @@ namespace ToDoAppBackend.Models
         public TaskDataState TaskDataState { get; set; } = TaskDataState.OPEN;
         
         [JsonProperty("createdAt")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
         [JsonProperty("updatedAt")]
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         
         [JsonProperty("completedAt")]
-        public DateTime CompletedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
         
         [JsonProperty("deadlineAt")]
-        public DateTime DeadlineAt { get; set; }
+        public DateTime? DeadlineAt { get; set; }
         
         [JsonProperty("subTasks")]
         public ICollection<TaskItem>? SubTasks { get; set; } = null;

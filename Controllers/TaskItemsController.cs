@@ -83,7 +83,7 @@ namespace ToDoAppBackend.Controllers
                 existingTask.TaskItemMessage = taskItem.TaskItemMessage;
                 existingTask.TaskDataState = taskItem.TaskDataState;
                 existingTask.CreatedAt = taskItem.CreatedAt;
-                existingTask.UpdatedAt = DateTime.Now;
+                existingTask.UpdatedAt = DateTime.UtNow;
                 existingTask.SubTasks = taskItem.SubTasks;
 
                 await _itemContext.SaveChangesAsync();
@@ -159,7 +159,7 @@ namespace ToDoAppBackend.Controllers
                     taskItem.TaskItemMessage.Message = _taskItemMessageResolver.ResolveTaskMessage(taskItem.TaskItemMessage);
                 }
 
-                if (taskItem.DeadlineAt >= DateTime.Now)
+                if (taskItem.DeadlineAt >= DateTime.UtcNow)
                 {
                     taskItem.TaskDataState = TaskDataState.STALE;
                 }
