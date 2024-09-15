@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -18,6 +19,7 @@ namespace ToDoAppBackend.Models
         
         [JsonProperty("taskDataState")]
         [JsonConverter(typeof(StringEnumConverter))]
+        [Column(TypeName = "varchar(24)")]
         public TaskDataState TaskDataState { get; set; } = TaskDataState.OPEN;
         
         [JsonProperty("createdAt")]
