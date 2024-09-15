@@ -11,6 +11,13 @@ RUN dotnet tool install --global dotnet-ef
 COPY . ./
 RUN dotnet publish "ToDoAppBackend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Use the .NET SDK image for applying migrations
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migration
+WORKDIR /src
+COPY --from=build /src /src
+RUN dotnet tool restore
+RUN dotnet ef database update --project /src/ToDoAppBackend.csproj
+
 # Use the ASP.NET Core runtime image for running the app
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
