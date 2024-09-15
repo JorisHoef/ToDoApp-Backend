@@ -67,7 +67,7 @@ namespace ToDoAppBackend.Controllers
             {
                 return BadRequest("ID mismatch.");
             }
-            
+
             _taskItemLogger.LogInfo($"PUT request received with body: {JsonConvert.SerializeObject(taskItem)}");
 
             var existingTask = await _itemContext.TaskItems.FindAsync(id);
@@ -110,7 +110,7 @@ namespace ToDoAppBackend.Controllers
             }
 
             _taskItemLogger.LogInfo($"POST request received with body: {JsonConvert.SerializeObject(taskItem)}");
-            
+
             try
             {
                 _itemContext.TaskItems.Add(taskItem);
