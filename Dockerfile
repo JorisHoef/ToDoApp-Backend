@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migration
 WORKDIR /src
 COPY --from=build /src /src
 RUN dotnet tool restore
-RUN dotnet ef database update --project /src/ToDoAppBackend.csproj
+RUN dotnet ef database update --project /src/ToDoAppBackend.csproj --context TaskItemContext
 
 # Use the ASP.NET Core runtime image for running the app
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

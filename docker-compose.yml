@@ -29,6 +29,16 @@
     networks:
       - app-network
 
+  ef-migrate:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    entrypoint: ["dotnet", "ef", "database", "update", "--project", "/src/ToDoAppBackend.csproj", "--context", "TaskItemContext"]
+    volumes:
+      - .:/src
+    depends_on:
+      - db
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
 
