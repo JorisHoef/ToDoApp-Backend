@@ -83,7 +83,7 @@ namespace ToDoAppBackend.Controllers
                 existingTask.TaskItemMessage = taskItem.TaskItemMessage;
                 existingTask.TaskDataState = taskItem.TaskDataState;
                 existingTask.CreatedAt = taskItem.CreatedAt;
-                existingTask.UpdatedAt = DateTime.UtNow;
+                existingTask.UpdatedAt = DateTime.UtcNow;
                 existingTask.SubTasks = taskItem.SubTasks;
 
                 await _itemContext.SaveChangesAsync();
